@@ -2,15 +2,30 @@
   "name": "node_rest_api",
   "version": "1.0.0",
   "description": "Api REST with node and Typescript",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest --forceExit --coverage --verbose"
-  },
+  "author": "Alejandro Saucedo Villanueva",
+  "license": "ISC",
+  "main": "server.js",
   "keywords": [
     "api",
     "rest",
     "node"
   ],
-  "author": "Alejandro Saucedo Villanueva",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asaucedo777/node_rest_api.git"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "build-sass": "node-sass src/assets/styles/main.scss dist/assets/styles/main.css",
+    "build-ts": "tsc",
+    "test": "jest --forceExit --coverage --verbose",
+    "build": "npm run build-sass && npm run build-ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "typescript": "3.4.3",
+    "eslint": "6.1.0",
+    "node-sass": "4.12.0",
+    "jest": "24.8.0"
+  }
 }
