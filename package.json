@@ -1,0 +1,16 @@
+{
+  "name": "node_rest_api",
+  "version": "1.0.0",
+  "description": "Api REST with node and Typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --forceExit --coverage --verbose"
+  },
+  "keywords": [
+    "api",
+    "rest",
+    "node"
+  ],
+  "author": "Alejandro Saucedo Villanueva",
+  "license": "ISC"
+}
