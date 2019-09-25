@@ -15,17 +15,21 @@
     "url": "https://github.com/asaucedo777/node_rest_api.git"
   },
   "scripts": {
-    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-    "build-sass": "node-sass src/assets/styles/main.scss dist/assets/styles/main.css",
     "build-ts": "tsc",
+    "build-sass": "node-sass src/assets/styles/main.scss dist/assets/styles/main.css",
+    "lint": "tsc --noEmit && eslint \"src/**/*.{js,ts}\" --quiet --fix",
     "test": "jest --forceExit --coverage --verbose",
     "build": "npm run build-sass && npm run build-ts",
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "body-parser": "1.19.0",
+    "eslint": "^6.4.0",
+    "express": "^4.17.1",
+    "jest": "^24.9.0"
+  },
+  "dev-dependencies": {
     "typescript": "3.4.3",
-    "eslint": "6.1.0",
-    "node-sass": "4.12.0",
-    "jest": "24.8.0"
+    "node-sass": "4.12.0"
   }
 }
