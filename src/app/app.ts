@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req: Request, res: Response) => {
-  res.json({ "message": "Welcome to home!" });
+  res.json({ 'message': 'Welcome to home!' });
 });
 
 export default app;
