@@ -1,7 +1,7 @@
-import express from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
 import { Request, Response } from 'express';
-import { ENVIRONMENT, PROTOCOL, URL, PORT } from '../environments/environment';
+import { ENVIRONMENT, PORT, PROTOCOL, URL } from '../environments/environment';
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req: Request, res: Response) => {
-  res.json({ 'message': 'Welcome to home!' });
+    res.json({ message: 'Welcome to home!' });
 });
 
 export default app;
