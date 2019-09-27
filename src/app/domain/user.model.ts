@@ -8,7 +8,7 @@ export class User implements IUser {
   name!: string;
   constructor(data: IUser) {
     let retorno: User = {
-      id: 1,
+      id: -1,
       name: '',
     };
     if (data) {
