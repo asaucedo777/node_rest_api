@@ -1,6 +1,6 @@
 # Test coverage dir
 coverage
-# Dependencies directory
-node_modules
 # Build outDir
 dist
+# Dependencies directory
+node_modules
