@@ -1,7 +1,6 @@
 import bodyParser from 'body-parser';
 import 'dotenv/config';
 import express from 'express';
-import { Connection } from 'typeorm';
 
 import { BBDD_HOST, BBDD_PORT, ENVIRONMENT, PORT, PROTOCOL, URL } from '../environments/environment';
 import {
@@ -9,6 +8,7 @@ import {
   ENVIRONMENT_URL,
 } from './constants/app.constants';
 import IController from './controller.interface';
+import router from './router';
 
 export class App {
   public app: express.Application;
@@ -23,6 +23,7 @@ export class App {
     controllers.forEach((controller) => {
       this.app.use('/', controller.router);
     });
+    this.app.use('/static', router);
   }
   public run() {
     this.app.listen(PORT, () => {
