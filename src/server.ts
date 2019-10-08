@@ -1,27 +1,21 @@
-import { createConnection } from 'typeorm';
+import 'reflect-metadata';
+import { Connection, createConnection } from 'typeorm';
 
-import app from './app/app';
-import connectionOptions from './connectionOptions';
+import { App } from './app/app';
+import { UserController } from './app/controllers/user.controller';
+import { config } from './ormconfig';
 
-// Validate database connection
-(
-  async () => {
-    try {
-      const connection = await createConnection(connectionOptions);
-      await connection.runMigrations();
-    } catch (error) {
-      console.log('Error while connecting to database: ', error);
-      return error;
-    }
-  }
-)();
-
-// Start application
-app.listen(app.get('port'), () => {
-  console.log(
-    '  App is running at http://localhost:%d in %s mode',
-    app.get('port'),
-    app.get('env'),
-  );
-  console.log('  Press CTRL-C to stop\n');
-});
+try {
+  createConnection(config)
+    .then((connection: Connection): void | PromiseLike<void> => {
+      const app = new App([
+        new UserController(connection),
+      ]);
+      app.run();
+    })
+    .catch((error: any) => {
+      console.log('Error while getting connection.', error);
+    });
+} catch (error) {
+  console.log('Error while connecting to database:', error);
+}

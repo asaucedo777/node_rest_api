@@ -1,7 +1,7 @@
 export const ENVIRONMENT = 'development';
 export const PROTOCOL = 'http://';
 export const URL = 'localhost';
-export const PORT = '3000';
+export const PORT = 3000;
 
 export const BBDD_HOST = 'localhost';
 export const BBDD_PORT = 5432;

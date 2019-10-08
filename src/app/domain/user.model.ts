@@ -1,13 +1,13 @@
-export interface IUser {
+export interface IUserDTO {
   id: number;
   name: string;
 }
 
-export class User implements IUser {
+export class UserDTO implements IUserDTO {
   id!: number;
   name!: string;
-  constructor(data: IUser) {
-    let retorno: User = {
+  constructor(data: IUserDTO) {
+    let retorno: UserDTO = {
       id: -1,
       name: '',
     };

@@ -1,95 +1,186 @@
-import { Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
+import { Connection } from 'typeorm';
 
-import { User } from '../domain/user.model';
-import { USERS } from '../mocks/user.mock';
-import * as userService from '../services/user.service';
+import { NextFunction } from 'connect';
+import IController from '../controller.interface';
+import { User } from '../entities/user.entity';
+import { UserRepository } from '../repositories/user.repository';
+import { UserService } from '../services/user.service';
 
-export const getAll = (req: Request, res: Response): void => {
-  const users = userService.selectAll();
-  if (users === undefined || users.length === 0) {
-    res.status(404).send({
-      message: 'Not Found ',
-    });
-  } else {
-    res.json(users);
+export class UserController implements IController {
+  public router: Router;
+  public service: UserService;
+  public connection: Connection;
+  constructor(connection: Connection) {
+    this.router = Router();
+    this.router.get('/users', this.getAll);
+    this.router.get('/users/:id', this.getById);
+    this.router.post('/users', this.create);
+    this.router.put('/users', this.update);
+    this.router.patch('/users', this.modify);
+    this.router.delete('/users/:id', this.remove);
+    this.service = new UserService(connection);
+    this.connection = connection;
   }
-  return;
-};
-export const getById = (req: Request, res: Response): void => {
-  const user = userService.selectById(req.params.id);
-  if (user === undefined || user.id === -1) {
-    res.status(404).send({
-      message: 'Not Found ' + req.params.id,
-    });
-  } else {
-    res.json(user);
+  public getAll = async (req: Request, res: Response, next: NextFunction) => {
+    this.connection
+      .getCustomRepository(UserRepository)
+      .find()
+      .then((result) => {
+        console.log('Resultado: ', result);
+        if (result === undefined || result.length === 0) {
+          res.status(404).send({
+            message: 'Not Found ',
+          });
+        } else {
+          res.json(result);
+        }
+      })
+      .catch((error) => {
+        console.log('Error en getAll: ', error);
+      });
+    return;
   }
-  return;
-};
-export const create = (req: Request, res: Response): void => {
-  if (!req.body) {
-    res.status(400).send({
-      message: 'Bad Request',
-    });
-  } else {
-    const user = new User({
-      id: req.body.id,
-      name: req.body.name,
-    });
-    userService.insert(user);
-    res.status(201).send({
-      message: 'Created',
-      id: -1,
-    });
+  public getById = async (req: Request, res: Response, next: NextFunction) => {
+    this.connection
+      .getCustomRepository(UserRepository)
+      .findByIds([req.params.id])
+      .then((result) => {
+        if (result === undefined || result.length === 0) {
+          res.status(404).send({
+            message: 'Not found ' + req.params.id,
+          });
+        } else {
+          res.json(result);
+        }
+      })
+      .catch((error) => {
+        console.log('Error en getById: ', error);
+      });
   }
-  return;
-};
-export const update = (req: Request, res: Response): void => {
-  if (!req.body) {
-    res.status(400).send({
-      message: 'Bad Request',
-    });
-  } else {
-    const user = new User({
-      id: req.body.id,
-      name: req.body.name,
-    });
-    userService.update(user);
-    res.status(200).send({
-      message: 'Updated',
-    });
+  public create = async (req: Request, res: Response) => {
+    if (!req.body) {
+      res.status(400).send({
+        message: 'Bad Request',
+      });
+    } else {
+      const userCreate = new User();
+      userCreate.id = req.body.id;
+      userCreate.name = req.body.name;
+      this.connection
+        .getCustomRepository(UserRepository)
+        .insert(userCreate)
+        .then((result) => {
+          if (result === undefined) {
+            res.status(404).send({
+              message: 'Not Found ' + req.params.id,
+            });
+          } else {
+            res.status(201).send({
+              message: 'Created',
+              id: result.identifiers[0].id,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log('Error en getById: ', error);
+        });
+    }
+    return;
   }
-  return;
-};
-export const modify = (req: Request, res: Response): void => {
-  if (!req.body) {
-    res.status(400).send({
-      message: 'Bad Request',
-    });
-  } else {
-    const user = new User({
-      id: req.body.id,
-      name: req.body.name,
-    });
-    // TODO Patch
-    userService.update(user);
-    res.status(200).send({
-      message: 'Modified',
-    });
+  public update = async (req: Request, res: Response) => {
+    if (!req.body) {
+      res.status(400).send({
+        message: 'Bad Request',
+      });
+    } else {
+      const userUpdate = new User();
+      userUpdate.id = req.body.id;
+      userUpdate.name = req.body.name;
+      this.connection
+        .getCustomRepository(UserRepository)
+        .update(userUpdate.id, userUpdate)
+        .then((result) => {
+          if (result === undefined) {
+            res.status(404).send({
+              message: 'Not Found ' + req.params.id,
+            });
+          } else {
+            res.status(200).send({
+              message: 'Updated',
+              id: req.params.id,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log('Error en update: ', error);
+        });
+    }
+    return;
   }
-  return;
-};
-export const erase = (req: Request, res: Response): void => {
-  const user = USERS.find((e: User) => e.id + '' === req.params.id);
-  if (user === undefined || user.id === -1) {
-    res.status(404).send({
-      message: 'Not Found ' + req.params.id,
-    });
-  } else {
-    userService.erase(req.params.id);
-    res.status(204).send({
-      message: 'No Content',
-    });
+  public modify = async (req: Request, res: Response) => {
+    if (!req.body) {
+      res.status(400).send({
+        message: 'Bad Request',
+      });
+    } else {
+      const userUpdate = new User();
+      userUpdate.id = req.body.id;
+      userUpdate.name = req.body.name;
+      this.connection
+        .getCustomRepository(UserRepository)
+        .save(userUpdate)
+        .then((result) => {
+          if (result === undefined) {
+            res.status(404).send({
+              message: 'Not Found ' + req.params.id,
+            });
+          } else {
+            res.status(200).send({
+              message: 'Updated',
+              id: req.params.id,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log('Error en update: ', error);
+        });
+    }
+    return;
   }
-  return;
-};
+  public remove = async (req: Request, res: Response) => {
+    this.connection
+      .getCustomRepository(UserRepository)
+      .findByIds([req.params.id])
+      .then((result) => {
+        if (result === undefined || result.length !== 1) {
+          res.status(404).send({
+            message: 'Not Found ' + req.params.id,
+          });
+        } else {
+          const userRemove = new User();
+          userRemove.id = result[0].id;
+          userRemove.name = result[0].name;
+          this.connection
+            .getCustomRepository(UserRepository)
+            .remove(userRemove)
+            .then((result2) => {
+              if (result2 === undefined) {
+                res.status(404).send({
+                  message: 'Not Found ' + req.params.id,
+                });
+              } else {
+                res.status(204).send({
+                  message: 'Removed',
+                  id: req.params.id,
+                });
+              }
+            })
+            .catch((error) => {
+              console.log('Error en remove: ', error);
+            });
+        }
+      });
+    return;
+  }
+}

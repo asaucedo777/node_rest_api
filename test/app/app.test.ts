@@ -1,6 +1,32 @@
+import 'reflect-metadata';
 import supertest from 'supertest';
-import app from '../../src/app/app';
+import { createConnection } from 'typeorm';
 
+import { Application } from 'express';
+import { Connection } from 'typeorm';
+import { App } from '../../src/app/app';
+import { UserController } from '../../src/app/controllers/user.controller';
+import { config } from '../../test/ormconfig.dev';
+
+let application: App;
+let app: Application;
+try {
+  createConnection(config)
+    .then((connection: Connection): void | PromiseLike<void> => {
+      application = new App([
+        new UserController(connection),
+      ]);
+      application.run();
+      app = application.app;
+    })
+    .catch((error: any) => {
+      console.log('Error while getting connection.', error);
+    });
+} catch (error) {
+  console.log('Error while connecting to database:', error);
+}
+
+// TODO app doesn't have value until createConnection executes the call back
 describe('GET /random-url', () => {
   it('debe retornar 404 KO', (done) => {
     supertest(app).get('/reset')

@@ -1,8 +1,9 @@
 import { ConnectionOptions } from 'typeorm';
 
+import { User } from './app/entities/user.entity';
 import { BBDD_BBDD, BBDD_HOST, BBDD_PASS, BBDD_PORT, BBDD_USER } from './environments/environment';
 
-const connectionOptions: ConnectionOptions = {
+export const config: ConnectionOptions = {
   type: 'postgres',
   host: BBDD_HOST,
   port: BBDD_PORT,
@@ -10,14 +11,15 @@ const connectionOptions: ConnectionOptions = {
   password: BBDD_PASS,
   database: BBDD_BBDD,
   logging: true,
+  synchronize: true,
   entities: [
-    'src/app/entities/*.entity.ts}',
+    User,
   ],
   migrations: [
     'src/app/migrations/*.ts',
   ],
   subscribers: [
-    'subscribers/*.ts',
+    'src/app/subscribers/*.ts',
   ],
   cli: {
     entitiesDir: 'src/app/entities',
@@ -25,5 +27,3 @@ const connectionOptions: ConnectionOptions = {
     subscribersDir: 'src/app/subscribers',
   },
 };
-
-export default connectionOptions;
