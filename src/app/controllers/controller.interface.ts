@@ -1,5 +1,5 @@
 import { Router } from 'express';
 
-export default interface IController {
+export interface IController {
   router: Router;
 }

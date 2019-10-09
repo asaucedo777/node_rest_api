@@ -2,10 +2,10 @@ import { Request, Response, Router } from 'express';
 import { Connection, getRepository } from 'typeorm';
 
 import { NextFunction } from 'connect';
-import IController from '../controller.interface';
 import { User } from '../entities/user.entity';
 import { UserRepository } from '../repositories/user.repository';
 import { UserService } from '../services/user.service';
+import { IController } from './controller.interface';
 
 export class UserController implements IController {
   public router: Router;
